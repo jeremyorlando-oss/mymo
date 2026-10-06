@@ -1,0 +1,334 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mymo</title><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mymo"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png">
+<style>*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0}img{max-width:100%}</style>
+</head><body><div id="lock"><div class="lk"><img src="icon-192.png" alt="" width="72" height="72" style="border-radius:16px"><p id="lt">Entre ton code</p><div id="dots"></div><p id="le" class="m"></p>
+<div id="pad"><button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" id="fbtn" aria-label="Face ID">Face ID</button><button type="button" data-k="0">0</button><button type="button" data-k="del" aria-label="Effacer">⌫</button></div></div></div>
+<style>
+/* Style iOS : grand titre, listes groupées, contrôle segmenté */
+:root{--bg:#f2f2f7;--card:#fff;--fg:#000;--mut:#8a8a8e;--ac:#007aff;--ok:#34c759;--bad:#ff3b30;--line:#e5e5ea;--fill:#e9e9ee;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--fg:#fff;--mut:#98989f;--ac:#0a84ff;--ok:#30d158;--bad:#ff453a;--line:#38383a;--fill:#2c2c2e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--fg:#fff;--mut:#98989f;--ac:#0a84ff;--ok:#30d158;--bad:#ff453a;--line:#38383a;--fill:#2c2c2e;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:17px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;padding:16px;padding-block:12px 48px;max-width:620px;margin:auto;-webkit-font-smoothing:antialiased}
+h1{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:8px 0 2px}
+h2{font-size:13px;font-weight:400;text-transform:uppercase;color:var(--mut);margin:24px 16px 6px}
+.m{color:var(--mut);font-size:13px}
+.grp{background:var(--card);border-radius:12px;overflow:hidden}
+.li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;border-bottom:.5px solid var(--line);min-height:24px}.li:last-child{border:0}
+.li b{font-weight:400;font-variant-numeric:tabular-nums}.li .r{text-align:right;min-width:0}
+.rings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px 8px;text-align:center}.rings>div{display:grid;justify-items:center;gap:6px;min-width:0}.rings .m{font-size:12px}
+.ring span.sm{font-size:13px;line-height:1.1}.ring span.sm small{display:block;font-size:11px;font-weight:500;color:var(--mut)}
+@property --p{syntax:'<number>';inherits:false;initial-value:0}
+.ring{animation:fill 1.1s cubic-bezier(.2,.8,.2,1)}@keyframes fill{from{--p:0}}
+@media (prefers-reduced-motion:reduce){.ring{animation:none}}
+.ring{--p:0;width:84px;height:84px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--c,var(--ok)) calc(var(--p)*1%),var(--fill) 0)}
+.ring span{width:68px;height:68px;border-radius:50%;background:var(--card);display:grid;place-items:center;font:600 22px/1 inherit;font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--fill);border-radius:2px;margin-top:6px;width:120px;margin-left:auto}.bar i{display:block;height:100%;background:var(--ok);border-radius:2px}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin:12px 16px}.seg button{flex:1;background:none;color:var(--fg);font:500 14px inherit;padding:6px;border-radius:7px}
+.seg button.on{background:var(--card);box-shadow:0 1px 3px #0003}
+input,select{font:inherit;border:0;background:none;color:var(--fg);text-align:right;min-width:0;flex:1;outline:none}select{text-align:right;text-align-last:right;-webkit-appearance:none;appearance:none}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ac);border-radius:6px}
+button{font:inherit;border:0;cursor:pointer}
+.btn{display:block;width:100%;background:var(--ac);color:#fff;font-weight:600;padding:14px;border-radius:12px;margin-top:12px}
+.lnk{background:none;color:var(--ac);padding:0}
+.cl{font-size:11px;fill:var(--mut)}.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.bub{padding:8px 12px;border-radius:16px;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere}.me{background:var(--ac);color:#fff;justify-self:end}.bot{background:var(--fill);justify-self:start}
+#tb{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:.5px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+#tb button{background:none;color:var(--mut);display:grid;justify-items:center;gap:2px;font-size:10px;font-weight:500;flex:1;padding:2px}#tb button.on{color:var(--ac)}
+#tb svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+body{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important}
+#t-ai #chat{max-height:none!important}
+#lock{position:fixed;inset:0;z-index:9;background:var(--bg);display:grid;place-items:center;padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px)}
+.lk{display:grid;justify-items:center;gap:14px;width:100%;max-width:300px}#lt{font-size:20px;margin:0}
+#dots{display:flex;gap:14px;height:14px}#dots i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--fg)}#dots i.f{background:var(--fg)}
+#pad{display:grid;grid-template-columns:repeat(3,76px);gap:16px 24px;margin-top:10px}
+#pad button{width:76px;height:76px;border-radius:50%;background:var(--fill);color:var(--fg);font-size:30px}
+#pad #fbtn,#pad [data-k=del]{background:none;font-size:15px;color:var(--ac)}#pad [data-k=del]{font-size:24px;color:var(--fg)}
+body{padding-top:calc(12px + env(safe-area-inset-top,0px))!important}
+.li.lnk{padding:11px 16px;border-radius:0}.sw{width:22px;height:22px;border-radius:50%;padding:0;border:2px solid transparent;box-shadow:inset 0 0 0 2px var(--card)}.sw.on{border-color:var(--fg)}
+.srow{position:relative;overflow:hidden;border-bottom:.5px solid var(--line)}.srow:last-child{border:0}.srow .li{border:0;background:var(--card);position:relative;transition:transform .25s}
+.srow.open .sl{transform:translateX(-96px)}.del{position:absolute;right:0;top:0;bottom:0;width:96px;background:var(--bad);color:#fff;font-weight:600}
+.banner{display:block;margin:12px 0 0;padding:12px 16px;border-radius:12px;background:color-mix(in srgb,#ff9500 18%,var(--card));font-size:15px}
+.mnav{display:flex;align-items:center;justify-content:space-between;padding:8px 16px}.mnav button{background:none;color:var(--ac);font-size:22px;padding:4px 10px}
+#rv{position:fixed;inset:0;z-index:8;background:var(--bg);overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.rvh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.rvf{max-width:620px;margin:16px auto 0}#rvb{max-width:620px;margin:auto}#rvb h1{font-size:28px}
+.chips{justify-content:flex-start;gap:8px}.chips button{background:var(--fill);color:var(--fg);border-radius:14px;padding:5px 14px;font-size:14px;font-variant-numeric:tabular-nums}
+.in{color:var(--ok)}.out{color:var(--fg)}
+img.th{width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:middle}
+#msg{margin:8px 16px;min-height:1em}
+</style>
+<p id="st" class="m" style="margin:0">Chargement…</p>
+<section class="tab" id="t-res"><h1>Résumé</h1><h2>Score du mois</h2>
+<div class="grp rings" id="rings"></div>
+<div id="bk"></div><div id="rvban"></div><h2>Situation</h2><div class="grp" id="kpi"></div>
+<h2>Par mois</h2><div class="grp" style="padding:12px 12px 10px"><div style="overflow-x:auto"><svg id="ch" viewBox="0 0 600 190" style="width:100%;min-width:460px;display:block" role="img" aria-label="Entrées et dépenses par mois"></svg></div><div class="m" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px"><span><i class="dot" style="background:var(--ok)"></i>Entrées</span><span><i class="dot" style="background:var(--ac)"></i>Entrées année précédente</span><span><i class="dot" style="background:var(--bad)"></i>Dépenses</span><span>── objectif</span><span>┄ charges fixes</span></div></div>
+<h2>Objectifs</h2><div class="grp" id="obj"></div>
+<h2>Enveloppes</h2><div class="grp" id="env"></div>
+</section><section class="tab" id="t-add" hidden><h1>Ajouter</h1><h2>Calculateur</h2>
+<div class="grp">
+<label class="li"><span>Montant reçu</span><input id="ca" type="number" inputmode="decimal" step="0.05" min="0" placeholder="0.00 CHF"></label>
+<label class="li"><span>Type</span><select id="cs"><option value="sal">Salaire / mission</option><option value="ent">Remb. entreprise</option><option value="aut">Autre entrée</option></select></label>
+<div id="cr"></div></div>
+<p class="m" style="margin:6px 16px">Ne rien enregistrer ici : c'est une simulation. Vire ensuite chaque montant vers son projet Yuh.</p>
+<h2>Ajouter</h2>
+<form id="f"><div class="grp">
+<div class="seg" id="seg"><button type="button" data-v="out" class="on">Dépense</button><button type="button" data-v="in">Entrée</button></div>
+<label class="li"><span>Montant</span><input id="a" type="number" inputmode="decimal" step="0.05" min="0" placeholder="0.00 CHF" required></label><div class="li chips" id="chips"><button type="button" data-v="10">10</button><button type="button" data-v="20">20</button><button type="button" data-v="50">50</button><button type="button" data-v="100">100</button></div>
+<label class="li"><span>Catégorie</span><select id="s"></select></label>
+<label class="li"><span>Note</span><input id="n" placeholder="Optionnel"></label>
+<div class="li"><span>Capture</span><span class="r"><img id="pv" class="th" hidden alt=""><button type="button" class="lnk" id="pick">Choisir…</button><input id="file" type="file" accept="image/*,application/pdf" hidden></span></div>
+</div><button class="btn">Enregistrer</button><div id="msg" class="m"></div></form>
+</section><section class="tab" id="t-acc" hidden><h1>Comptes</h1><h2>Soldes réels</h2>
+<form id="fs"><div class="grp">
+<label class="li"><span>BCV</span><input id="bcv" type="number" inputmode="decimal" step="0.05"></label>
+<label class="li"><span>Revolut</span><input id="rev" type="number" inputmode="decimal" step="0.05"></label>
+<label class="li"><span>Yuh</span><input id="yuh" type="number" inputmode="decimal" step="0.05"></label>
+<label class="li"><span>Cash</span><input id="cash" type="number" inputmode="decimal" step="0.05"></label>
+</div><button class="btn">Mettre à jour</button></form>
+<h2>Virements à faire</h2><div class="grp" id="rb"></div><p class="m" style="margin:6px 16px">Calculé à partir des derniers soldes réels. Mets-les à jour en fin de mois. Le cash n'est pas compté.</p>
+<h2>Bilan du mois</h2><div class="grp"><div class="mnav"><button type="button" id="mp" aria-label="Mois précédent">‹</button><b id="ml"></b><button type="button" id="mn" aria-label="Mois suivant">›</button></div><div id="bil"></div></div>
+<h2>Historique</h2><p class="m" style="margin:-2px 16px 6px">Balaie une ligne vers la gauche pour la supprimer.</p><div class="grp" id="h"></div>
+
+</section>
+<section class="tab" id="t-set" hidden><h1>Réglages</h1>
+<h2>Répartition des entrées</h2><div class="grp"><label class="li"><span>Réservoir de vie</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="p-reservoir" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">%</span></span></label><label class="li"><span>Dettes</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="p-dette" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">%</span></span></label><label class="li"><span>Réserve de sécurité</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="p-reserve" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">%</span></span></label><label class="li"><span>Plaisir</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="p-plaisir" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">%</span></span></label><div class="li"><span>Total</span><b id="ptot"></b></div></div>
+<p class="m" style="margin:6px 16px">Le total doit faire 100 % pour être enregistré.</p>
+<h2>Budget mensuel</h2><div class="grp"><label class="li"><span>Budget de vie</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-vie" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>Charges fixes totales</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-fixes" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>Fixes payés par BCV</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-fixBcv" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>Virement vers Revolut</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-vir" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>Objectif d'entrées</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-objectif" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label></div>
+<h2>Dettes et créances</h2><div class="grp"><label class="li"><span>Dettes loyer et assurance</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-dettePerso" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>Prêt personnel</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-pret" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>L'entreprise me doit</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-entDoit" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label></div>
+<h2>Réserve de sécurité</h2><div class="grp"><label class="li"><span>Cible minimum</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-resMin" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label><label class="li"><span>Cible idéale</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="v-resMax" type="number" inputmode="decimal" step="1" min="0" style="max-width:110px"><span class="m">CHF</span></span></label></div>
+<h2>Apparence</h2><div class="grp"><div class="seg" id="thm"><button type="button" data-v="auto">Automatique</button><button type="button" data-v="light">Clair</button><button type="button" data-v="dark">Sombre</button></div>
+<div class="li"><span>Couleur</span><span id="acc" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="sw" data-c="#007aff" aria-label="Bleu" style="background:#007aff"></button><button type="button" class="sw" data-c="#34c759" aria-label="Vert" style="background:#34c759"></button><button type="button" class="sw" data-c="#5856d6" aria-label="Indigo" style="background:#5856d6"></button><button type="button" class="sw" data-c="#af52de" aria-label="Violet" style="background:#af52de"></button><button type="button" class="sw" data-c="#ff2d55" aria-label="Rose" style="background:#ff2d55"></button><button type="button" class="sw" data-c="#ff9500" aria-label="Orange" style="background:#ff9500"></button><button type="button" class="sw" data-c="#30b0c7" aria-label="Turquoise" style="background:#30b0c7"></button><button type="button" class="sw" data-c="#8e8e93" aria-label="Graphite" style="background:#8e8e93"></button></span></div></div>
+<h2>Sécurité</h2><div class="grp"><button type="button" class="li lnk" id="fid" style="width:100%;text-align:left">Activer Face ID</button><button type="button" class="li lnk" id="chg" style="width:100%;text-align:left">Changer le code</button><label class="li"><span>Verrouiller après</span><select id="idle"><option value="1">1 minute</option><option value="2">2 minutes</option><option value="5">5 minutes</option><option value="10">10 minutes</option></select></label><button type="button" class="li lnk" id="lnow" style="width:100%;text-align:left">Verrouiller maintenant</button></div>
+<h2>Catégories</h2><div class="grp" id="catl"></div><div class="grp" style="margin-top:10px"><label class="li"><span>Nouvelle catégorie</span><input id="cn" placeholder="Nom" autocomplete="off"></label><div class="seg" id="ct"><button type="button" data-v="out" class="on">Dépense</button><button type="button" data-v="in">Entrée</button></div><label class="li" id="crw" hidden><span>Répartition</span><select id="cr"><option value="pct">Selon les %</option><option value="res">100 % réserve</option></select></label><button type="button" class="li lnk" id="cadd" style="width:100%;text-align:left">Ajouter la catégorie</button></div><p class="m" style="margin:6px 16px">Touche un nom pour le renommer. Les catégories de base ne peuvent pas être supprimées.</p>
+<h2>Point du mois</h2><div class="grp"><button type="button" class="li lnk" style="width:100%;text-align:left" onclick="openSetup()">Refaire la configuration</button><button type="button" class="li lnk" style="width:100%;text-align:left" onclick="openReview()">Faire le point maintenant</button></div>
+<h2>Données</h2><div class="grp"><button type="button" class="li lnk" id="exp" style="width:100%;text-align:left">Exporter une sauvegarde</button><label class="li lnk" style="color:var(--ac);cursor:pointer">Importer une sauvegarde<input id="imp" type="file" accept=".json,application/json" hidden></label><button type="button" class="li lnk" id="rst" style="width:100%;text-align:left;color:var(--bad)">Effacer toutes les données</button><div class="li" id="rstc" hidden><span class="m">Tout effacer définitivement ?</span><span class="r"><button type="button" class="lnk" id="rstn">Annuler</button> <button type="button" class="lnk" id="rsty" style="color:var(--bad);margin-left:12px">Effacer</button></span></div></div>
+<p class="m" style="margin:6px 16px">Tes données restent uniquement sur cet iPhone, chiffrées avec ton code. La sauvegarde exportée n'est pas chiffrée : garde-la en lieu sûr.</p>
+<h2>À propos</h2><div class="grp"><div class="li"><span>Version</span><span class="m">1.6</span></div><div class="li"><span>Stockage</span><span class="m" id="stor"></span></div></div>
+</section><div id="rv" hidden><div class="rvh"><button type="button" class="lnk" id="rvx">Plus tard</button><b id="rvt"></b><span class="m" id="rvn"></span></div><div id="rvb"></div><div class="rvf"><button type="button" class="btn" id="rvg">Continuer</button></div></div>
+<nav id="tb"><button data-t="t-res" class=on><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg>Résumé</button><button data-t="t-add"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button><button data-t="t-acc"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></svg>Comptes</button><button data-t="t-set"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9 7 7m10 10 2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Réglages</button></nav>
+<script>
+document.getElementById("tb").onclick=e=>{const b=e.target.closest("button");if(!b)return;document.querySelectorAll(".tab").forEach(x=>x.hidden=x.id!=b.dataset.t);document.querySelectorAll("#tb button").forEach(x=>x.classList.toggle("on",x==b));scrollTo(0,0)};
+const IN0={sal:"Salaire / mission",ent:"Remb. entreprise",aut:"Autre entrée"};
+const OUT0={fix:"Fixes",sor:"Sorties / repas",aid:"Aide parents",ach:"Achats ponctuels",pla:"Plaisir",rp:"Remb. dettes",aut:"Autre"};
+let IN={...IN0},OUT={...OUT0};function applyCats(){const c=S.cats||{};IN={...IN0,...c.in};OUT={...OUT0,...c.out}}
+const D={pct:{reservoir:0,dette:0,reserve:0,plaisir:0},b:{reservoir:0,dette:0,reserve:0,plaisir:0,placements:0},dettePerso:0,pret:0,entDoit:0,vie:0,resMin:0,resMax:0,fixes:0,fixBcv:0,vir:0,objectif:0,hist:{},soldes:{bcv:0,rev:0,yuh:0,cash:0}};
+const L={reservoir:"Réservoir de vie",dette:"Dettes",reserve:"Réserve",plaisir:"Plaisir",pret:"Prêt personnel"},AC={reservoir:"reste sur BCV",dette:"reste sur BCV",reserve:"→ Yuh",plaisir:"→ Revolut",pret:"→ remboursement"};
+let db,as,S=D,TX=[],ty="out",file=null;const $=i=>document.getElementById(i),f=x=>(Math.round(x*100)/100).toLocaleString("fr-CH",{minimumFractionDigits:2})+" CHF",esc=t=>String(t).replace(/[&<>"]/g,c=>"&#"+c.charCodeAt(0)+";");
+function opts(){applyCats();$("s").innerHTML=Object.entries(ty=="in"?IN:OUT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");const lc=window.P&&P.last&&P.last[ty];if(lc&&$("s").querySelector(`option[value="${lc}"]`))$("s").value=lc}
+$("chips").onclick=e=>{const v=e.target.dataset.v;if(v)$("a").value=v};
+$("seg").onclick=e=>{const v=e.target.dataset.v;if(!v)return;ty=v;[...$("seg").children].forEach(b=>b.classList.toggle("on",b.dataset.v==v));opts()};opts();
+$("pick").onclick=()=>$("file").click();
+$("file").onchange=()=>{file=$("file").files[0]||null;$("pick").textContent=file?"Changer":"Choisir…";const p=$("pv");if(file&&file.type.startsWith("image/")){p.src=URL.createObjectURL(file);p.hidden=false}else p.hidden=true};
+function alloc(a,src){const r={},b=S.b;if(src=="ent"){const p=Math.min(a,S.pret);if(p)r.pret=p;if(a-p)r.reserve=a-p;return r}
+ if(src!="sal"&&((S.cats||{}).rule||{})[src]!="pct")return{reserve:a};let over=0;for(const[k,p]of Object.entries(S.pct)){let v=a*p/100;if(k=="dette"){const room=Math.max(0,S.dettePerso-b.dette);if(v>room){over+=v-room;v=room}}r[k]=v}
+ if(over)r.reserve+=over;return r}
+function score(){const m=new Date(),key=m.getMonth()+"-"+m.getFullYear(),mo=TX.filter(t=>t.mk==key);
+ const spent=mo.filter(t=>t.ty=="out"&&!["rp","pla"].includes(t.s)).reduce((s,t)=>s+t.a,0),inc=mo.filter(t=>t.ty=="in").reduce((s,t)=>s+t.a,0);
+ const sc=spent<=S.vie?100:Math.max(0,Math.round(100-(spent-S.vie)/S.vie*100));return{sc,spent,inc}}
+const col=p=>p>=80?"var(--ok)":p>=50?"#ffcc00":"var(--bad)";let lastR="";
+const ring=(p,txt,lab,sub,sm)=>`<div><div class="ring" style="--p:${Math.min(100,p)};--c:${col(p)}"><span${sm?' class="sm"':""}>${txt}</span></div><b style="font-size:14px">${lab}</b><span class="m">${sub}</span></div>`;
+const li=(l,v,x="")=>`<div class="li"><span>${l}</span><span class="r"><b>${v}</b>${x}</span></div>`;
+function render(){applyCats();const b=S.b,so=S.soldes,dette=S.dettePerso+S.pret,{sc,spent,inc}=score(),fx=S.fixes||0,obj=S.objectif||0,pf=fx?Math.round(inc/fx*100):0;
+ const R=ring(sc,sc+"%","Budget",`${Math.round(spent)} / ${S.vie} CHF`)+ring(pf,Math.min(pf,999)+"%","Charges fixes",`${Math.round(inc)} / ${fx} CHF`)+ring(obj?inc/obj*100:0,Math.round(inc).toLocaleString("fr-CH")+" CHF","Entrées",`objectif ${obj.toLocaleString("fr-CH")}`,1);
+ if(R!=lastR){$("rings").innerHTML=R;lastR=R}
+ $("kpi").innerHTML=li("Argent total",f(so.bcv+so.rev+(so.yuh||0)+so.cash))+li("Dettes",f(dette))+li("L'entreprise me doit",f(S.entDoit))+li("Mois couverts",(S.vie?b.reservoir/S.vie:0).toFixed(1)+" mois")+li("Je tiens jusqu'au",until(b.reservoir),`<div class="m">avec la réserve : ${until(b.reservoir+b.reserve)}</div>`);
+ const bar=(v,m)=>`<div class="bar"><i style="width:${Math.min(100,v/m*100)}%"></i></div>`;
+ $("env").innerHTML=li("Réservoir de vie",f(b.reservoir),`<div class="m">BCV · paie ${S.fixBcv||0} CHF de fixes + vire ${S.vir||0} CHF vers Revolut le 1er</div>`)+li("Réserve de sécurité",f(b.reserve),bar(b.reserve,S.resMin))+li("Dettes (mis de côté)",f(b.dette),bar(b.dette,S.dettePerso||1))+li("Plaisir",f(b.plaisir))+li("Placements (Yuh)",f(b.placements||0),`<div class="m">${b.reserve>=S.resMin?"Actif":"Démarre quand la réserve atteint "+f(S.resMin)}</div>`);
+ $("h").innerHTML=TX.length?TX.map((t,ix)=>`<div class="srow" data-ix="${ix}"><button type="button" class="del">Supprimer</button><div class="li sl"><span>${t.img?`<img class="th" data-img="${esc(t.img)}" alt="Capture"> `:""}${(t.ty=="in"?IN:OUT)[t.s]||esc(t.s)}<div class="m">${esc(t.d)}${t.n?" · "+esc(t.n):""}</div></span><b class="${t.ty}">${t.ty=="in"?"+":"−"}${f(t.a)}</b></div></div>`).join(""):`<div class="li m">Aucune opération. Ajoute ta première dépense ou entrée ci-dessus.</div>`;calc();chart();reb();hydrate();objectives();bilan();backupBanner();reviewBanner()}
+function reb(){const b=S.b,so=S.soldes,A=[["bcv","BCV",b.reservoir+b.dette],["rev","Revolut",b.plaisir],["yuh","Yuh",b.reserve+(b.placements||0)]].map(([k,n,t])=>({n,t,d:(so[k]||0)-t}));
+ const fr=A.filter(a=>a.d>0.5).map(a=>({...a})),to=A.filter(a=>a.d<-0.5).map(a=>({...a,d:-a.d})),T=[];
+ for(const x of to)for(const y of fr){const v=Math.min(x.d,y.d);if(v>0.5){T.push(`${y.n} → ${x.n}`,v);x.d-=v;y.d-=v}}
+ const left=fr.reduce((s,a)=>s+a.d,0),miss=to.reduce((s,a)=>s+a.d,0);let h="";
+ for(let i=0;i<T.length;i+=2)h+=li(T[i],f(T[i+1]));
+ if(left>0.5)h+=li("Surplus non attribué",f(left),'<div class="m">reste du budget : à garder ou vers Réserve (Yuh)</div>');
+ if(miss>0.5)h+=li("Manque",`<span style="color:var(--bad)">${f(miss)}</span>`,'<div class="m">les comptes contiennent moins que les enveloppes</div>');
+ $("rb").innerHTML=(h||li("Tout est à sa place","✓"))+A.map(a=>li(`<span class="m">${a.n} : cible</span>`,`<span class="m">${f(a.t)}</span>`)).join("")}
+const START=new Date(2026,10,1).getTime();const mk=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+function chart(){const now=new Date(),M=[];for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);M.push({k:mk(d),l:d.toLocaleDateString("fr-CH",{month:"short"}).replace(".",""),i:0,o:0,pk:mk(new Date(d.getFullYear()-1,d.getMonth(),1)),p:0})}
+ const ix=Object.fromEntries(M.map(m=>[m.k,m]));for(const[k,v]of Object.entries(S.hist||{}))if(ix[k])ix[k].i+=v;
+ for(const t of TX){const m=ix[mk(new Date(t.ts))];if(!m)continue;if(t.ty=="in")m.i+=t.a;else if(t.s!="rp"&&t.ts>=START)m.o+=t.a}
+ const all={};for(const[k,v]of Object.entries(S.hist||{}))all[k]=(all[k]||0)+v;for(const t of TX)if(t.ty=="in"){const k=mk(new Date(t.ts));all[k]=(all[k]||0)+t.a}M.forEach(m=>m.p=all[m.pk]||0);
+ const W=600,H=190,T=8,B=22,obj=S.objectif||0,mx=Math.max(obj,...M.map(m=>Math.max(m.i,m.o,m.p)))*1.08||1,y=v=>T+(H-T-B)*(1-v/mx),cw=W/12,bw=cw*.32,b0=y(0);
+ let s=`<line x1="0" x2="${W}" y1="${b0}" y2="${b0}" stroke="var(--line)"/><line x1="0" x2="${W}" y1="${y(obj)}" y2="${y(obj)}" stroke="var(--mut)" stroke-width=".6"/><line x1="0" x2="${W}" y1="${y(S.fixes||0)}" y2="${y(S.fixes||0)}" stroke="var(--mut)" stroke-width=".6" stroke-dasharray="3 3"/><text x="${W-2}" y="${y(S.fixes||0)}" dy="-4" text-anchor="end" class="cl">fixes ${S.fixes||0} CHF</text><text x="${W-2}" y="${y(obj)-4}" text-anchor="end" class="cl">${obj.toLocaleString("fr-CH")} CHF</text>`;
+ M.forEach((m,j)=>{const x=j*cw+cw/2;s+=(m.p?`<rect x="${x-bw-6}" y="${y(m.p)}" width="3" height="${b0-y(m.p)}" rx="1.5" fill="var(--ac)"><title>${m.l} année précédente : +${Math.round(m.p)} CHF</title></rect>`:"")+`<rect x="${x-bw-1}" y="${y(m.i)}" width="${bw}" height="${b0-y(m.i)}" rx="2" fill="var(--ok)"><title>${m.l} : +${Math.round(m.i)} CHF</title></rect><rect x="${x+1}" y="${y(m.o)}" width="${bw}" height="${b0-y(m.o)}" rx="2" fill="var(--bad)"><title>${m.l} : −${Math.round(m.o)} CHF</title></rect><text x="${x}" y="${H-6}" text-anchor="middle" class="cl">${m.l}</text>`});
+ $("ch").innerHTML=s;const sc=$("ch").parentElement;requestAnimationFrame(()=>sc.scrollLeft=sc.scrollWidth)}
+function calc(){const a=+$("ca").value;if(!(a>0)){$("cr").innerHTML="";return}const r=alloc(a,$("cs").value);
+ $("cr").innerHTML=Object.entries(r).filter(([,v])=>v>0).map(([k,v])=>li(L[k]+`<div class="m">${AC[k]}</div>`,f(v),`<div class="m">${Math.round(v/a*1000)/10} %</div>`)).join("")+li("<b>Total</b>",f(a),'<div class="m">100 %</div>')}
+$("ca").oninput=$("cs").onchange=calc;
+
+render();
+const K="mymo-v1";db=true;
+var DK=null;const b6=a=>{const u=new Uint8Array(a);let t="";for(let i=0;i<u.length;i+=8192)t+=String.fromCharCode(...u.subarray(i,i+8192));return btoa(t)},ub=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+async function load(){try{let o=null;const e=localStorage.getItem("mymo-enc");if(e&&DK){const x=JSON.parse(e);o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:ub(x.iv)},DK,ub(x.ct))))}else if(!e)o=JSON.parse(localStorage.getItem(K)||"null");if(o){S={...D,...o.S,b:{...D.b,...(o.S||{}).b},soldes:{...D.soldes,...(o.S||{}).soldes}};TX=o.TX||[]}}catch(e){$("st").textContent="Lecture des données impossible"}}
+let PQ=Promise.resolve();function persist(){if(!DK)return;const data=new TextEncoder().encode(JSON.stringify({S,TX}));PQ=PQ.then(async()=>{const iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},DK,data);localStorage.setItem("mymo-enc",JSON.stringify({iv:b6(iv),ct:b6(ct)}));localStorage.removeItem(K)}).catch(()=>{$("msg").textContent="Stockage plein : exporte une sauvegarde."})}
+async function afterUnlock(){await load();if(!S.setup&&(TX.length||S.dettePerso||S.vie||S.soldes.bcv||Object.keys(S.hist||{}).length)){S.setup=true;persist()}if(localStorage.getItem(K))persist();opts();render();if(!S.setup)setTimeout(openSetup,400)}
+const idb=new Promise(r=>{try{const q=indexedDB.open("mymo",2);q.onupgradeneeded=()=>{const d=q.result;for(const n of["img","key"])if(!d.objectStoreNames.contains(n))d.createObjectStore(n)};q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+async function idbDo(st,mode,fn){const d=await idb;if(!d)return null;return new Promise(r=>{const t=d.transaction(st,mode),q=fn(t.objectStore(st));t.oncomplete=()=>r(q&&q.result);t.onerror=()=>r(null)})}
+const idbPutKey=k=>idbDo("key","readwrite",o=>o.put(k,"dk")),idbKey=()=>idbDo("key","readonly",o=>o.get("dk"));
+async function putImg(id,blob){let v=blob;if(DK){const iv=crypto.getRandomValues(new Uint8Array(12));v={iv,ct:await crypto.subtle.encrypt({name:"AES-GCM",iv},DK,await blob.arrayBuffer()),type:blob.type}}await idbDo("img","readwrite",o=>o.put(v,id))}
+async function getImg(id){const v=await idbDo("img","readonly",o=>o.get(id));if(v&&v.ct){if(!DK)return null;try{return new Blob([await crypto.subtle.decrypt({name:"AES-GCM",iv:v.iv},DK,v.ct)],{type:v.type})}catch(e){return null}}return v instanceof Blob?v:null}
+async function hydrate(){for(const el of document.querySelectorAll("img[data-img]:not([src])")){const bl=await getImg(el.dataset.img);if(bl){const u=URL.createObjectURL(bl);el.src=u;el.onclick=()=>window.open(u)}}}
+
+var MO=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+function until(x){const m=x/(S.vie||0);if(!S.vie||m<=0)return"—";const d=new Date();d.setDate(d.getDate()+Math.round(m*30.44));return d.toLocaleDateString("fr-CH",{day:"numeric",month:"long",year:"numeric"})}
+function avgInc(){const now=new Date(),all={};for(const[k,v]of Object.entries(S.hist||{}))all[k]=(all[k]||0)+v;for(const t of TX)if(t.ty=="in"){const k=mk(new Date(t.ts));all[k]=(all[k]||0)+t.a}let sum=0;for(let i=1;i<=6;i++)sum+=all[mk(new Date(now.getFullYear(),now.getMonth()-i,1))]||0;return sum/6}
+function eta(rem,pct){if(rem<=0)return"Atteint ✓";const per=avgInc()*pct/100;if(per<=0)return"—";const d=new Date();d.setMonth(d.getMonth()+Math.ceil(rem/per));return"vers "+MO[d.getMonth()]+" "+d.getFullYear()}
+function objectives(){const b=S.b,av=avgInc();$("obj").innerHTML=li("Dettes loyer et assurance",eta(S.dettePerso-b.dette,S.pct.dette),`<div class="m">reste ${f(Math.max(0,S.dettePerso-b.dette))} à mettre de côté</div>`)
+ +li("Réserve minimum",eta(S.resMin-b.reserve,S.pct.reserve),`<div class="m">reste ${f(Math.max(0,S.resMin-b.reserve))}</div>`)
+ +li("Réserve idéale",eta((S.resMax||0)-b.reserve,S.pct.reserve),`<div class="m">estimé sur ${f(av)}/mois en moyenne (6 derniers mois)</div>`)}
+var BM=0;
+function bilan(){const now=new Date(),d=new Date(now.getFullYear(),now.getMonth()+BM,1),k=mk(d),pd=mk(new Date(d.getFullYear(),d.getMonth()-1,1));$("ml").textContent=d.toLocaleDateString("fr-CH",{month:"long",year:"numeric"});$("mn").disabled=BM>=0;
+ const sum=(key,ty,f2)=>TX.filter(t=>mk(new Date(t.ts))==key&&t.ty==ty&&(!f2||f2(t))).reduce((a,t)=>a+t.a,0);
+ const inc=sum(k,"in")+((S.hist||{})[k]||0),pinc=sum(pd,"in")+((S.hist||{})[pd]||0),out=sum(k,"out",t=>t.s!="rp"),pout=sum(pd,"out",t=>t.s!="rp"),rp=sum(k,"out",t=>t.s=="rp");
+ const dl=(x,y,good)=>{if(!y)return"";const p=Math.round((x-y)/y*100);const ok=good?p>=0:p<=0;return`<div class="m" style="color:${ok?"var(--ok)":"var(--bad)"}">${p>=0?"+":""}${p} % vs mois préc.</div>`};
+ let h=li("Entrées",f(inc),dl(inc,pinc,1))+li("Dépenses",f(out),dl(out,pout,0));if(rp)h+=li("Remboursements de dettes",f(rp));h+=li("<b>Solde du mois</b>",`<span class="${inc-out-rp>=0?"in":""}" style="${inc-out-rp<0?"color:var(--bad)":""}">${f(inc-out-rp)}</span>`);
+ const cats={};TX.filter(t=>mk(new Date(t.ts))==k&&t.ty=="out").forEach(t=>cats[t.s]=(cats[t.s]||0)+t.a);
+ h+=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,v])=>li(`<span class="m">${OUT[c]||c}</span>`,`<span class="m">${f(v)} · ${out+rp?Math.round(v/(out+rp)*100):0} %</span>`)).join("");$("bil").innerHTML=h}
+$("mp").onclick=()=>{BM--;bilan()};$("mn").onclick=()=>{if(BM<0){BM++;bilan()}};
+function backupBanner(){let P2={};try{P2=JSON.parse(localStorage.getItem("mymo-prefs")||"{}")}catch(e){}const last=P2.lastBackup||0,days=Math.floor((Date.now()-last)/864e5);
+ $("bk").innerHTML=(TX.length||S.soldes.bcv)&&days>=7?`<button type="button" class="banner lnk" id="bkb" style="width:100%;text-align:left;color:var(--fg)">⚠︎ ${last?`Dernière sauvegarde il y a ${days} jours`:"Aucune sauvegarde pour l'instant"}. <span style="color:var(--ac)">Sauvegarder</span></button>`:"";const bb=$("bkb");if(bb)bb.onclick=()=>$("exp").click()}
+function undo(t,N){const x=t.fx;if(!x)return;if(x.r)for(const[k,v]of Object.entries(x.r)){if(k=="pret")N.pret+=v;else N.b[k]-=v}if(x.ed)N.entDoit+=x.ed;if(x.dp)N.dettePerso+=x.dp;if(x.pr)N.pret+=x.pr;if(x.e)N.b.dette+=x.e;if(x.pl)N.b.plaisir+=x.pl;if(x.rv)N.b.reservoir+=x.rv}
+(()=>{let sx=0,row=null;const H=$("h");
+ H.addEventListener("touchstart",e=>{const r=e.target.closest(".srow");if(!r)return;sx=e.touches[0].clientX;row=r},{passive:true});
+ H.addEventListener("touchend",e=>{if(!row)return;const dx=e.changedTouches[0].clientX-sx;document.querySelectorAll(".srow.open").forEach(x=>x!=row&&x.classList.remove("open"));if(dx<-40)row.classList.add("open");else if(dx>20)row.classList.remove("open");row=null},{passive:true});
+ H.addEventListener("click",async e=>{if(e.target.classList.contains("del")){const ix=+e.target.parentElement.dataset.ix,t=TX[ix];const N=structuredClone(S);undo(t,N);TX.splice(ix,1);await save(N);return}
+  const r=e.target.closest(".srow");if(r&&!e.target.closest("img")&&matchMedia("(hover:hover)").matches){r.classList.toggle("open")}});})();
+function autoFix(){const now=new Date();if(now<new Date(START))return;let d=S.lastFix?new Date(+S.lastFix.slice(0,4),+S.lastFix.slice(5)-1+1,1):new Date(START),added=0;
+ while(d<=now){const amt=S.fixes||0;TX.push({ts:d.getTime(),mk:d.getMonth()+"-"+d.getFullYear(),d:d.toLocaleDateString("fr-CH"),ty:"out",s:"fix",a:amt,n:"Automatique",fx:{},id:"f"+d.getTime()});S.lastFix=mk(d);added++;d=new Date(d.getFullYear(),d.getMonth()+1,1)}
+ if(added){TX.sort((a,b)=>b.ts-a.ts);persist()}}
+
+const curM=()=>mk(new Date());
+function needReview(){return S.setup&&Date.now()>=START&&S.lastReview!=curM()}
+function reviewBanner(){$("rvban").innerHTML=needReview()?`<button type="button" class="banner lnk" style="width:100%;text-align:left;color:var(--fg);background:color-mix(in srgb,var(--ac) 16%,var(--card))" onclick="openReview()">📋 Point du mois à faire. <span style="color:var(--ac)">Commencer</span></button>`:""}
+
+function openSetup(){let i=0;const A={pct:{...S.pct},soldes:{...S.soldes},hist:{...(S.hist||{})}};
+ const inp=(id,l,v,u="CHF")=>`<label class="li"><span>${l}</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="${id}" type="number" inputmode="decimal" step="0.05" min="0" value="${v||""}" placeholder="0" style="max-width:120px"><span class="m">${u}</span></span></label>`;
+ const nv=id=>+$(id).value||0,now=new Date(),ms=[...Array(12)].map((_,j)=>new Date(now.getFullYear(),now.getMonth()-12+j,1));
+ const steps=[
+  {t:"Bienvenue",h:()=>`<h1>Bienvenue dans Mymo</h1><p>Quelques questions pour configurer l'app selon ta situation. Tout se modifie ensuite dans Réglages.</p><div class="grp"><label class="li lnk" style="color:var(--ac);cursor:pointer">J'ai une sauvegarde : l'importer<input type="file" accept=".json,application/json" hidden onchange="$('imp').files=this.files;$('imp').dispatchEvent(new Event('change'))"></label></div>`,go:()=>1},
+  {t:"Comptes",h:()=>`<h1>Tes soldes actuels</h1><p class="m">Ce qu'il y a aujourd'hui sur chaque compte.</p><div class="grp">${inp("o-bcv","BCV (salaires)",A.soldes.bcv)}${inp("o-rev","Revolut (dépenses)",A.soldes.rev)}${inp("o-yuh","Yuh (épargne)",A.soldes.yuh)}${inp("o-cash","Cash",A.soldes.cash)}</div>`,go:()=>{A.soldes={bcv:nv("o-bcv"),rev:nv("o-rev"),yuh:nv("o-yuh"),cash:nv("o-cash")};return 1}},
+  {t:"Budget",h:()=>`<h1>Ton budget mensuel</h1><p class="m">Le budget de vie est ce dont tu as besoin chaque mois, charges fixes comprises.</p><div class="grp">${inp("o-vie","Budget de vie",A.vie??S.vie)}${inp("o-fixes","Charges fixes totales",A.fixes??S.fixes)}${inp("o-fixBcv","Fixes payés depuis la BCV",A.fixBcv??S.fixBcv)}${inp("o-vir","Virement mensuel vers Revolut",A.vir??S.vir)}</div>`,
+   go:()=>{for(const k of["vie","fixes","fixBcv","vir"])A[k]=nv("o-"+k);return 1}},
+  {t:"Répartition",h:()=>`<h1>Répartition des entrées</h1><p class="m">Comment partager chaque salaire entre tes enveloppes. Le total doit faire 100 %.</p><div class="grp">${inp("o-reservoir","Réservoir de vie",A.pct.reservoir,"%")}${inp("o-dette","Dettes",A.pct.dette,"%")}${inp("o-reserve","Réserve de sécurité",A.pct.reserve,"%")}${inp("o-plaisir","Plaisir",A.pct.plaisir,"%")}<div class="li"><span>Total</span><b id="o-tot"></b></div></div><p class="m" id="o-err" style="color:var(--bad);margin:8px 16px"></p>`,
+   on:()=>{const t=()=>{const v=["reservoir","dette","reserve","plaisir"].reduce((a,k)=>a+nv("o-"+k),0);$("o-tot").textContent=v+" %";$("o-tot").style.color=v==100?"var(--ok)":"var(--bad)";return v};t();$("rvb").oninput=t},
+   go:()=>{const ks=["reservoir","dette","reserve","plaisir"],v=ks.reduce((a,k)=>a+nv("o-"+k),0);if(v!=100){$("o-err").textContent="Le total doit faire 100 %.";return 0}ks.forEach(k=>A.pct[k]=nv("o-"+k));return 1}},
+  {t:"Dettes",h:()=>`<h1>Dettes et créances</h1><p class="m">Mets 0 si ça ne te concerne pas.</p><div class="grp">${inp("o-dettePerso","Dettes à rembourser",A.dettePerso??S.dettePerso)}${inp("o-pret","Prêt personnel",A.pret??S.pret)}${inp("o-entDoit","Ce que ton entreprise te doit",A.entDoit??S.entDoit)}</div>`,
+   go:()=>{for(const k of["dettePerso","pret","entDoit"])A[k]=nv("o-"+k);return 1}},
+  {t:"Objectifs",h:()=>{const v=A.vie||0;return`<h1>Réserve et objectif</h1><p class="m">Conseil : réserve minimum = 3 mois de budget (${f(v*3)}), idéale = 6 mois (${f(v*6)}).</p><div class="grp">${inp("o-resMin","Réserve minimum",A.resMin??(S.resMin||v*3))}${inp("o-resMax","Réserve idéale",A.resMax??(S.resMax||v*6))}${inp("o-objectif","Objectif d'entrées par mois",A.objectif??S.objectif)}</div>`},
+   go:()=>{for(const k of["resMin","resMax","objectif"])A[k]=nv("o-"+k);return 1}},
+  {t:"Historique",h:()=>`<h1>Tes revenus passés</h1><p class="m">Facultatif : ce que tu as reçu chaque mois. Ça alimente le graphique et les estimations.</p><div class="grp">${ms.map(d=>inp("o-h"+mk(d),d.toLocaleDateString("fr-CH",{month:"long",year:"numeric"}),A.hist[mk(d)])).join("")}</div>`,
+   go:()=>{ms.forEach(d=>{const v=nv("o-h"+mk(d));if(v)A.hist[mk(d)]=v;else delete A.hist[mk(d)]});return 1}},
+  {t:"Terminé",h:()=>`<h1>C'est prêt</h1><div class="grp">${li("Budget de vie",f(A.vie))}${li("Répartition",`${A.pct.reservoir} / ${A.pct.dette} / ${A.pct.reserve} / ${A.pct.plaisir} %`)}${li("Dettes",f(A.dettePerso+A.pret))}${li("Réserve minimum",f(A.resMin))}${li("Argent total",f(A.soldes.bcv+A.soldes.rev+A.soldes.yuh+A.soldes.cash))}</div>`,
+   go:async()=>{const N=structuredClone(S);Object.assign(N,{vie:A.vie,fixes:A.fixes,fixBcv:A.fixBcv,vir:A.vir,dettePerso:A.dettePerso,pret:A.pret,entDoit:A.entDoit,resMin:A.resMin,resMax:A.resMax,objectif:A.objectif,pct:A.pct,soldes:A.soldes,hist:A.hist,setup:true});await save(N);$("rv").hidden=true;$("rvx").hidden=false;return 0}}];
+ const show=()=>{const st=steps[i];$("rvt").textContent=st.t;$("rvn").textContent=(i+1)+"/"+steps.length;$("rvb").innerHTML=st.h();$("rvg").textContent=i==steps.length-1?"Commencer":"Continuer";$("rvb").oninput=null;st.on&&st.on();$("rv").scrollTop=0};
+ $("rvg").onclick=async()=>{const ok=await steps[i].go();if(ok&&i<steps.length-1){i++;show()}};$("rvx").hidden=true;$("rv").hidden=false;show()}
+function openReview(){$("rvx").hidden=false;const now=new Date(),mon=now.toLocaleDateString("fr-CH",{month:"long"}),prev=new Date(now.getFullYear(),now.getMonth()-1,1).toLocaleDateString("fr-CH",{month:"long"}),dm=(/^[aeiou]/.test(mon)?"d'":"de ")+mon,A={};let i=0;
+ const inp=(id,l,v)=>`<label class="li"><span>${l}</span><span class="r" style="display:flex;gap:4px;align-items:center;justify-content:flex-end"><input id="${id}" type="number" inputmode="decimal" step="0.05" min="0" value="${v??""}" style="max-width:120px"><span class="m">CHF</span></span></label>`;
+ const yn=(id,a,b)=>`<div class="seg" id="${id}"><button type="button" data-v="1" class="on">${a}</button><button type="button" data-v="0">${b}</button></div>`;
+ const segv=id=>$(id).querySelector(".on").dataset.v=="1";
+ const steps=[
+  {t:"Budget de vie",h:()=>`<h1>Budget ${dm}</h1><p class="m">Ton réservoir contient ${f(S.b.reservoir)}. Retirer le budget de vie de ce mois ?</p><div class="grp">${yn("q1","Retirer","Ne pas retirer")}${inp("q1a","Montant",S.vie)}</div>${S.b.reservoir<S.vie?`<p class="m" style="color:var(--bad);margin:8px 16px">Réservoir insuffisant : il manque ${f(S.vie-S.b.reservoir)}, payés par ta réserve ou tes entrées du mois.</p>`:""}`,
+   go:()=>{A.rv=segv("q1")?+$("q1a").value||0:0}},
+  {t:"Charges fixes",h:()=>`<h1>Charges fixes</h1><p class="m">Loyer, assurance, Salt, iCloud et Revolut ont-ils été payés ce mois ?</p><div class="grp">${yn("q2","Oui, payées","Pas encore")}${inp("q2a","Montant",S.fixes||0)}</div>`,go:()=>{A.fix=segv("q2")?+$("q2a").value||0:0}},
+  {t:"Entrées",h:()=>`<h1>Entrées oubliées</h1><p class="m">As-tu reçu de l'argent en ${prev} que tu n'as pas encore enregistré ?</p><div class="grp">${inp("q3a","Montant",0)}<label class="li"><span>Type</span><select id="q3s"><option value="sal">Salaire / mission</option><option value="ent">Remb. entreprise</option><option value="aut">Autre entrée</option></select></label></div>`,go:()=>{A.inc=+$("q3a").value||0;A.incS=$("q3s").value}},
+  {t:"Dettes",h:()=>`<h1>Dettes</h1><p class="m">Il reste ${f(S.dettePerso+S.pret)} de dettes. As-tu remboursé quelque chose ?</p><div class="grp">${inp("q4a","Montant remboursé",0)}</div>`,go:()=>{A.rp=+$("q4a").value||0}},
+  {t:"Soldes",h:()=>`<h1>Soldes réels</h1><p class="m">Regarde tes apps bancaires et indique les soldes d'aujourd'hui.</p><div class="grp">${inp("q5b","BCV",S.soldes.bcv)}${inp("q5r","Revolut",S.soldes.rev)}${inp("q5y","Yuh",S.soldes.yuh||0)}${inp("q5c","Cash",S.soldes.cash)}</div>`,
+   go:()=>{A.so={bcv:+$("q5b").value||0,rev:+$("q5r").value||0,yuh:+$("q5y").value||0,cash:+$("q5c").value||0}}},
+  {t:"Résumé",h:()=>{const L2=[];if(A.rv)L2.push(li("Retrait du réservoir",f(A.rv)));if(A.fix)L2.push(li("Charges fixes",f(A.fix)));if(A.inc)L2.push(li("Entrée",f(A.inc)));if(A.rp)L2.push(li("Remboursement de dettes",f(A.rp)));L2.push(li("Soldes mis à jour","✓"));
+   return`<h1>Tout est prêt</h1><p class="m">Vérifie avant de valider. Tu pourras supprimer une ligne dans l'historique si besoin.</p><div class="grp">${L2.join("")}</div>`},go:async()=>{
+   const N=structuredClone(S),d=new Date(new Date().getFullYear(),new Date().getMonth(),1,8);if(A.inc)applyTx(N,"in",A.incS,A.inc,"Point du mois",null,new Date());if(A.rv)applyTx(N,"mv","Retrait du réservoir",A.rv,"Budget "+dm,null,d);
+   if(A.fix)applyTx(N,"out","fix",A.fix,"Point du mois",null,d);if(A.rp)applyTx(N,"out","rp",A.rp,"Point du mois",null,new Date());N.soldes={...N.soldes,...A.so};N.lastReview=curM();await save(N);$("rv").hidden=true;
+   document.querySelector('#tb [data-t="t-acc"]').click()}}];
+ const show=()=>{const st=steps[i];$("rvt").textContent=st.t;$("rvn").textContent=(i+1)+"/"+steps.length;$("rvb").innerHTML=st.h();$("rvg").textContent=i==steps.length-1?"Valider":"Continuer";
+  $("rvb").querySelectorAll(".seg").forEach(sg=>sg.onclick=e=>{const b=e.target.closest("button");if(!b)return;sg.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x==b))});$("rv").scrollTop=0};
+ $("rvg").onclick=async()=>{await steps[i].go();if(i<steps.length-1){i++;show()}};$("rvx").onclick=()=>{$("rv").hidden=true};$("rv").hidden=false;show()}
+$("st").textContent="";render();
+const save=async N=>{S=N;persist();render()};
+
+function applyTx(N,T,s,a,n,img,d){let msg,fx={};
+ if(T=="in"){const r=alloc(a,s);fx.r=r;if(s=="ent")fx.ed=Math.min(a,N.entDoit);for(const[k,v]of Object.entries(r)){if(k=="pret")N.pret-=v;else N.b[k]+=v}if(s=="ent")N.entDoit=Math.max(0,N.entDoit-a);msg="Répartition : "+Object.entries(r).map(([k,v])=>`${L[k]} ${f(v)}`).join(" · ")}
+ else if(s=="rp"){const p=Math.min(a,N.dettePerso);fx.dp=p;fx.pr=Math.min(a-p,N.pret);fx.e=Math.min(a,N.b.dette);N.dettePerso-=p;N.pret=Math.max(0,N.pret-(a-p));N.b.dette-=fx.e;msg=`Dettes réduites de ${f(a)}`+(a>fx.e?` (dont ${f(a-fx.e)} hors enveloppe)`:"")}
+ else if(T=="mv"){fx.rv=Math.min(a,N.b.reservoir);N.b.reservoir-=fx.rv;msg="Retrait du réservoir"}
+ else{if(s=="pla"){N.b.plaisir-=a;fx.pl=a}msg="Dépense enregistrée"}
+ TX.unshift({ts:d.getTime(),mk:d.getMonth()+"-"+d.getFullYear(),d:d.toLocaleDateString("fr-CH"),ty:T,s,a,n,img,fx,id:"t"+d.getTime()+Math.random().toString(36).slice(2,6)});TX.sort((x,y)=>y.ts-x.ts);return msg}
+$("f").onsubmit=async e=>{e.preventDefault();if(!db)return;const a=+$("a").value,s=$("s").value,n=$("n").value.trim();if(!(a>0))return;
+ $("msg").textContent="Enregistrement…";let img=null;
+ if(file){img="i"+Date.now();await putImg(img,file)}
+ const N=structuredClone(S),msg=applyTx(N,ty,s,a,n,img,new Date());if(window.P){P.last={...(P.last||{}),[ty]:s};saveP()}await save(N);
+ $("msg").textContent=msg;e.target.reset();file=null;$("pv").hidden=true;$("pick").textContent="Choisir…";ty==ty;opts()};
+$("fs").onsubmit=async e=>{e.preventDefault();if(!db)return;const N=structuredClone(S);for(const k of["bcv","rev","yuh","cash"])if($(k).value!=="")N.soldes[k]=+$(k).value;await save(N);e.target.reset()};
+</script>
+
+
+<script>
+const PK="mymo-prefs";window.P={theme:"auto",accent:"",idle:2};try{Object.assign(P,JSON.parse(localStorage.getItem(PK)||"{}"))}catch(e){}
+const saveP=()=>{try{localStorage.setItem(PK,JSON.stringify(P))}catch(e){}};
+function applyP(){const r=document.documentElement;if(P.theme=="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",P.theme);if(P.accent)r.style.setProperty("--ac",P.accent);else r.style.removeProperty("--ac");
+ [...$("thm").children].forEach(b=>b.classList.toggle("on",b.dataset.v==P.theme));[...$("acc").children].forEach(b=>b.classList.toggle("on",b.dataset.c==(P.accent||"#007aff")));$("idle").value=P.idle}
+applyP();
+$("thm").onclick=e=>{const v=e.target.dataset.v;if(v){P.theme=v;saveP();applyP()}};
+$("acc").onclick=e=>{const c=e.target.dataset.c;if(c){P.accent=c=="#007aff"?"":c;saveP();applyP()}};
+$("idle").onchange=()=>{P.idle=+$("idle").value;saveP()};
+const PCT=["reservoir","dette","reserve","plaisir"],VAL=["vie","fixes","fixBcv","vir","objectif","dettePerso","pret","entDoit","resMin","resMax"],DEF={};
+function fillSet(){PCT.forEach(k=>$("p-"+k).value=S.pct[k]);VAL.forEach(k=>$("v-"+k).value=S[k]??DEF[k]??0);ptot()}
+function ptot(){const t=PCT.reduce((a,k)=>a+(+$("p-"+k).value||0),0);$("ptot").textContent=t+" %";$("ptot").style.color=t==100?"var(--ok)":"var(--bad)";return t}
+PCT.forEach(k=>$("p-"+k).oninput=ptot);
+PCT.forEach(k=>$("p-"+k).onchange=()=>{if(ptot()!=100)return;const N=structuredClone(S);PCT.forEach(x=>N.pct[x]=+$("p-"+x).value);save(N)});
+VAL.forEach(k=>$("v-"+k).onchange=()=>{const v=+$("v-"+k).value;if(!(v>=0))return;const N=structuredClone(S);N[k]=v;save(N)});
+
+const SYS=["sal","ent","aut","fix","sor","aid","ach","pla","rp"];
+function catList(){applyCats();const row=(t,k,v)=>`<div class="li"><input data-t="${t}" data-k="${k}" value="${esc(v)}" aria-label="Nom" style="text-align:left"><span class="m">${t=="in"?"Entrée":"Dépense"}</span>${SYS.includes(k)?"":`<button type="button" class="lnk" data-del="${t}:${k}" style="color:var(--bad)">Supprimer</button>`}</div>`;$("catl").innerHTML=Object.entries(OUT).map(([k,v])=>row("out",k,v)).join("")+Object.entries(IN).map(([k,v])=>row("in",k,v)).join("")}
+$("catl").onchange=async e=>{const i=e.target;if(!i.dataset.k)return;const v=i.value.trim();if(!v)return;const N=structuredClone(S);N.cats=N.cats||{};N.cats[i.dataset.t]={...(N.cats[i.dataset.t]||{}),[i.dataset.k]:v};await save(N);opts()};
+$("catl").onclick=async e=>{const d=e.target.dataset.del;if(!d)return;const[t,k]=d.split(":");const N=structuredClone(S);if(N.cats&&N.cats[t])delete N.cats[t][k];await save(N);catList();opts()};
+let ctT="out";$("ct").onclick=e=>{const v=e.target.dataset.v;if(!v)return;ctT=v;[...$("ct").children].forEach(b=>b.classList.toggle("on",b.dataset.v==v));$("crw").hidden=v!="in"};
+$("cadd").onclick=async()=>{const n=$("cn").value.trim();if(!n)return;const k="c"+Date.now().toString(36),N=structuredClone(S);N.cats=N.cats||{};N.cats[ctT]={...(N.cats[ctT]||{}),[k]:n};if(ctT=="in")N.cats.rule={...(N.cats.rule||{}),[k]:$("cr").value};await save(N);$("cn").value="";catList();opts()};
+$("lnow").onclick=()=>window.lockNow&&window.lockNow();
+$("rst").onclick=()=>$("rstc").hidden=false;$("rstn").onclick=()=>$("rstc").hidden=true;
+$("rsty").onclick=async()=>{localStorage.removeItem("mymo-v1");localStorage.removeItem("mymo-enc");try{indexedDB.deleteDatabase("mymo")}catch(e){}location.reload()};
+document.querySelector('#tb [data-t="t-set"]').addEventListener("click",()=>{fillSet();catList();if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(e=>$("stor").textContent=(e.usage/1048576).toFixed(1)+" Mo utilisés")});
+</script>
+<script>
+(()=>{const LK="mymo-lock",N=6,IDLE=()=>((window.P||{}).idle||2)*60000;let L={};try{L=JSON.parse(localStorage.getItem(LK)||"{}")}catch(e){}
+const g=i=>document.getElementById(i),saveL=()=>{try{localStorage.setItem(LK,JSON.stringify(L))}catch(e){}};
+const rnd=n=>crypto.getRandomValues(new Uint8Array(n)),enc=new TextEncoder(),hasCode=()=>!!(L.wp||L.hash);
+let code="",first="",last=Date.now(),changing=false,busy=false,mode=hasCode()?"unlock":"new";
+async function kek(pin){const b=await crypto.subtle.importKey("raw",enc.encode(pin),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:ub(L.salt),iterations:210000,hash:"SHA-256"},b,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])}
+const prfKey=o=>crypto.subtle.importKey("raw",o,"AES-GCM",false,["encrypt","decrypt"]);
+async function wrap(k){const iv=rnd(12),raw=await crypto.subtle.exportKey("raw",DK);return{iv:b6(iv),ct:b6(await crypto.subtle.encrypt({name:"AES-GCM",iv},k,raw))}}
+async function unwrap(k,w){const raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:ub(w.iv)},k,ub(w.ct));return crypto.subtle.importKey("raw",raw,"AES-GCM",true,["encrypt","decrypt"])}
+const genDK=()=>crypto.subtle.generateKey({name:"AES-GCM",length:256},true,["encrypt","decrypt"]);
+const legacy=async p=>b6(await crypto.subtle.digest("SHA-256",enc.encode(L.salt+p)));
+const faceOn=()=>!!(L.cred&&(L.wf||L.fb));
+function ui(){g("lt").textContent={unlock:"Entre ton code",new:changing?"Nouveau code à 6 chiffres":"Choisis un code à 6 chiffres",confirm:"Confirme le code"}[mode];g("dots").innerHTML=Array.from({length:N},(_,i)=>`<i class="${i<code.length?"f":""}"></i>`).join("");g("fbtn").style.visibility=mode=="unlock"&&faceOn()?"visible":"hidden"}
+async function open_(){g("lock").hidden=true;last=Date.now();await afterUnlock();if(needReview())setTimeout(openReview,350)}
+function lock(){if(!changing)DK=null;mode=changing?"new":hasCode()?"unlock":"new";code="";g("le").textContent="";g("lock").hidden=false;ui();if(mode=="unlock"&&faceOn())setTimeout(faceid,300)}
+const wrong=()=>{g("le").textContent="Code incorrect";navigator.vibrate&&navigator.vibrate(200)};
+async function done(){busy=true;g("le").textContent="";try{
+ if(mode=="new"){first=code;mode="confirm"}
+ else if(mode=="confirm"){if(code!=first){g("le").textContent="Les codes ne correspondent pas";mode="new"}else{if(!L.salt)L.salt=b6(rnd(16));if(!DK)DK=await genDK();L.wp=await wrap(await kek(code));delete L.hash;changing=false;saveL();await open_()}}
+ else if(L.wp){let k;try{k=await unwrap(await kek(code),L.wp)}catch(e){wrong();return}DK=k;await open_()}
+ else if(await legacy(code)==L.hash){DK=await genDK();L.wp=await wrap(await kek(code));delete L.hash;const hadF=!!L.cred;delete L.cred;saveL();await open_();if(hadF)g("fid").textContent="Réactiver Face ID"}
+ else wrong()}finally{code="";busy=false;ui()}}
+g("pad").onclick=e=>{const k=e.target.dataset.k;if(!k||busy)return;if(k=="del")code=code.slice(0,-1);else if(code.length<N){code+=k;if(code.length==N){ui();setTimeout(done,120);return}}ui()};
+async function faceid(){if(!window.PublicKeyCredential||!faceOn())return;try{const o={challenge:rnd(32),allowCredentials:[{type:"public-key",id:ub(L.cred)}],userVerification:"required",timeout:60000};if(L.wf)o.extensions={prf:{eval:{first:ub(L.ps)}}};
+ const r=await navigator.credentials.get({publicKey:o});if(L.wf){const out=r.getClientExtensionResults().prf?.results?.first;if(!out)throw 0;DK=await unwrap(await prfKey(out),L.wf)}else DK=await idbKey();if(!DK)throw 0;await open_()}catch(e){g("le").textContent="Face ID annulé : utilise ton code"}}
+g("fbtn").onclick=faceid;
+g("fid").onclick=async()=>{if(!window.PublicKeyCredential){g("fid").textContent="Face ID non pris en charge ici";return}if(!DK)return;try{const ps=rnd(32);
+ const c=await navigator.credentials.create({publicKey:{challenge:rnd(32),rp:{name:"Mymo"},user:{id:rnd(16),name:"mymo",displayName:"Mymo"},pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},timeout:60000,extensions:{prf:{eval:{first:ps}}}}});
+ L.cred=b6(c.rawId);delete L.wf;delete L.fb;delete L.ps;const x=c.getClientExtensionResults().prf||{};let out=x.results&&x.results.first;
+ if(!out&&x.enabled){const r=await navigator.credentials.get({publicKey:{challenge:rnd(32),allowCredentials:[{type:"public-key",id:c.rawId}],userVerification:"required",timeout:60000,extensions:{prf:{eval:{first:ps}}}}});out=r.getClientExtensionResults().prf?.results?.first}
+ if(out){L.ps=b6(ps);L.wf=await wrap(await prfKey(out));g("fid").textContent="Face ID activé ✓"}else{await idbPutKey(DK);L.fb=true;g("fid").textContent="Face ID activé ✓ (mode simple)"}saveL()}catch(e){g("fid").textContent="Échec ("+e.name+") – touche pour réessayer"}};
+if(faceOn())g("fid").textContent=L.wf?"Face ID activé ✓":"Face ID activé ✓ (mode simple)";
+g("chg").onclick=()=>{changing=true;lock()};
+g("exp").onclick=async()=>{try{const q=JSON.parse(localStorage.getItem("mymo-prefs")||"{}");q.lastBackup=Date.now();localStorage.setItem("mymo-prefs",JSON.stringify(q));if(window.P)P.lastBackup=q.lastBackup;backupBanner()}catch(e){}
+ const data=JSON.stringify({S,TX}),name="mymo-sauvegarde-"+new Date().toISOString().slice(0,10)+".json",f=new File([data],name,{type:"application/json"});
+ try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(e){return}const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=name;a.click()};
+g("imp").onchange=async e=>{const fl=e.target.files[0];if(!fl)return;try{const o=JSON.parse(await fl.text());if(!o.S)throw 0;S={...D,...o.S,b:{...D.b,...o.S.b},soldes:{...D.soldes,...o.S.soldes},setup:true};TX=o.TX||[];persist();opts();render();g("rv").hidden=true;g("msg").textContent="Sauvegarde importée"}catch(x){g("msg").textContent="Fichier de sauvegarde invalide"}e.target.value=""};
+["pointerdown","keydown","touchstart"].forEach(t=>addEventListener(t,()=>{if(g("lock").hidden)last=Date.now()},{passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible"&&Date.now()-last>IDLE())lock();else if(document.visibilityState=="hidden")last=Math.min(last,Date.now())});
+setInterval(()=>{if(g("lock").hidden&&Date.now()-last>IDLE())lock()},5000);
+window.lockNow=lock;lock()})();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+</script>
+</body></html>
