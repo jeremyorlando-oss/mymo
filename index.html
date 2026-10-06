@@ -60,7 +60,7 @@ img.th{width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:
 #msg{margin:8px 16px;min-height:1em}
 </style>
 <p id="st" class="m" style="margin:0">Chargement…</p>
-<section class="tab" id="t-res"><h1>Résumé</h1><h2>Score du mois</h2>
+<section class="tab" id="t-res"><h1 style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">Résumé<span id="lsync" class="m" style="font-size:13px;font-weight:400"></span></h1><h2>Score du mois</h2>
 <div class="grp rings" id="rings"></div>
 <div id="bk"></div><div id="rvban"></div><h2>Situation</h2><div class="grp" id="kpi"></div>
 <h2>Par mois</h2><div class="grp" style="padding:12px 12px 10px"><div style="overflow-x:auto"><svg id="ch" viewBox="0 0 600 190" style="width:100%;min-width:460px;display:block" role="img" aria-label="Entrées et dépenses par mois"></svg></div><div class="m" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px"><span><i class="dot" style="background:var(--ok)"></i>Entrées</span><span><i class="dot" style="background:var(--ac)"></i>Entrées année précédente</span><span><i class="dot" style="background:var(--bad)"></i>Dépenses</span><span>── objectif</span><span>┄ charges fixes</span></div></div>
@@ -106,7 +106,7 @@ img.th{width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:
 <h2>Synchronisation</h2><div class="grp" id="sy"></div><p class="m" id="sym" style="margin:6px 16px"></p>
 <h2>Données</h2><div class="grp"><button type="button" class="li lnk" id="exp" style="width:100%;text-align:left">Exporter une sauvegarde</button><label class="li lnk" style="color:var(--ac);cursor:pointer">Importer une sauvegarde<input id="imp" type="file" accept=".json,application/json" hidden></label><button type="button" class="li lnk" id="rst" style="width:100%;text-align:left;color:var(--bad)">Effacer toutes les données</button><div class="li" id="rstc" hidden><span class="m">Tout effacer définitivement ?</span><span class="r"><button type="button" class="lnk" id="rstn">Annuler</button> <button type="button" class="lnk" id="rsty" style="color:var(--bad);margin-left:12px">Effacer</button></span></div></div>
 <p class="m" style="margin:6px 16px">Tes données restent uniquement sur cet iPhone, chiffrées avec ton code. La sauvegarde exportée n'est pas chiffrée : garde-la en lieu sûr.</p>
-<h2>À propos</h2><div class="grp"><div class="li"><span>Version</span><span class="m">1.7.2</span></div><div class="li"><span>Stockage</span><span class="m" id="stor"></span></div></div>
+<h2>À propos</h2><div class="grp"><div class="li"><span>Version</span><span class="m">1.7.3</span></div><div class="li"><span>Stockage</span><span class="m" id="stor"></span></div></div>
 </section><div id="rv" hidden><div class="rvh"><button type="button" class="lnk" id="rvx">Plus tard</button><b id="rvt"></b><span class="m" id="rvn"></span></div><div id="rvb"></div><div class="rvf"><button type="button" class="btn" id="rvg">Continuer</button></div></div>
 <nav id="tb"><button data-t="t-res" class=on><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg>Résumé</button><button data-t="t-add"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter</button><button data-t="t-acc"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></svg>Comptes</button><button data-t="t-set"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9 7 7m10 10 2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Réglages</button></nav>
 <script>
@@ -297,7 +297,8 @@ let JOIN=null,tmr=null,busy=false;
 const saveY=()=>{try{localStorage.setItem(SK,JSON.stringify(Y))}catch(e){}};
 const DOC=()=>`https://firestore.googleapis.com/v1/projects/${PJ}/databases/(default)/documents/vaults/${Y.uid}`;
 const ERR={EMAIL_EXISTS:"Ce compte existe déjà : connecte-toi.",INVALID_LOGIN_CREDENTIALS:"E-mail ou mot de passe incorrect.",INVALID_PASSWORD:"E-mail ou mot de passe incorrect.",EMAIL_NOT_FOUND:"E-mail ou mot de passe incorrect.",INVALID_EMAIL:"Adresse e-mail invalide.",MISSING_PASSWORD:"Entre un mot de passe.",TOO_MANY_ATTEMPTS_TRY_LATER:"Trop d'essais, réessaie plus tard.",OPERATION_NOT_ALLOWED:"Connexion par e-mail non activée dans Firebase."};
-function st(m){Y.status=m;saveY();const e=$("sym");if(e)e.textContent=m}
+function lsy(){const e=$("lsync");if(!e)return;if(!Y.uid){e.textContent="";return}const d=Y.last&&new Date(Y.last),t=d?(d.toDateString()==new Date().toDateString()?d.toLocaleTimeString("fr-CH",{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString("fr-CH",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("fr-CH",{hour:"2-digit",minute:"2-digit"})):"jamais";e.textContent="↻ Synchro "+t}
+function st(m){Y.status=m;if(/^(Synchronisé|À jour)/.test(m))Y.last=Date.now();saveY();lsy();const e=$("sym");if(e)e.textContent=m}
 async function auth(path,body){const r=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:${path}?key=${FK}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...body,returnSecureToken:true})});const j=await r.json();
  if(!r.ok){const c=((j.error&&j.error.message)||"").split(" ")[0];throw new Error(ERR[c]||(c.startsWith("WEAK_PASSWORD")?"Mot de passe trop court (6 caractères minimum).":"Erreur : "+c))}
  Y={email:j.email,uid:j.localId,rt:j.refreshToken,it:j.idToken,exp:Date.now()+(+j.expiresIn-60)*1000,ts:0};saveY()}
@@ -328,7 +329,7 @@ function syUI(){const el=$("sy");if(!el)return;const btn=(id,l,c="")=>`<button t
 window.syUI=syUI;
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")syncPull()});
 setInterval(()=>{if(document.visibilityState=="visible")syncPull()},30000);
-syUI()})();
+syUI();lsy()})();
 </script>
 <script>
 (()=>{const LK="mymo-lock",N=6,IDLE=()=>((window.P||{}).idle||2)*60000;let L={};try{L=JSON.parse(localStorage.getItem(LK)||"{}")}catch(e){}
