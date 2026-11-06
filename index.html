@@ -159,7 +159,7 @@ function reb(){const b=S.b,so=S.soldes,A=[["bcv",AN("bcv"),b.reservoir+b.dette],
  for(const x of to)for(const y of fr){const v=Math.min(x.d,y.d);if(v>0.5){T.push(`${y.n} → ${x.n}`,v);x.d-=v;y.d-=v}}
  const left=fr.reduce((s,a)=>s+a.d,0),miss=to.reduce((s,a)=>s+a.d,0);let h="";
  for(let i=0;i<T.length;i+=2)h+=li(T[i],f(T[i+1]));
- if(left>0.5)h+=li("Surplus non attribué",f(left),'<div class="m">reste du budget : à garder ou vers la réserve</div>');
+ 
  if(miss>0.5)h+=li("Manque",`<span style="color:var(--bad)">${f(miss)}</span>`,'<div class="m">les comptes contiennent moins que les enveloppes</div>');
  $("rb").innerHTML=(h||li("Tout est à sa place","✓"))+A.map(a=>li(`<span class="m">${a.n} : cible</span>`,`<span class="m">${f(a.t)}</span>`)).join("")}
 const SD=()=>S.start||0;const mk=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
