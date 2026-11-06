@@ -78,7 +78,8 @@ img.th{width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:
 <label class="li"><span>Montant reçu</span><input id="ca" type="number" inputmode="decimal" step="0.05" min="0" placeholder="0.00 CHF"></label>
 <label class="li"><span>Type</span><select id="cs"></select></label>
 <div id="cr"></div></div>
-<p class="m" style="margin:6px 16px">Ne rien enregistrer ici : c'est une simulation. Vire ensuite chaque montant vers le compte indiqué.</p>
+<button type="button" class="btn" id="cv" hidden>J'ai réparti l'argent</button>
+<p class="m" id="cm" style="margin:6px 16px">Vire chaque montant vers le compte indiqué, puis touche « J'ai réparti l'argent » : l'entrée est enregistrée et les soldes mis à jour. Ne l'ajoute pas une 2e fois en dessous.</p>
 <h2>Ajouter</h2>
 <form id="f"><div class="grp">
 <div class="seg" id="seg"><button type="button" data-v="out" class="on">Dépense</button><button type="button" data-v="in">Entrée</button></div>
@@ -146,7 +147,7 @@ function score(){const m=new Date(),key=m.getMonth()+"-"+m.getFullYear(),mo=TX.f
 const col=p=>p>=80?"var(--ok)":p>=50?"#ffcc00":"var(--bad)";let lastR="";
 const ring=(p,txt,lab,sub,sm)=>`<div><div class="ring" style="--p:${Math.min(100,p)};--c:${col(p)}"><span${sm?' class="sm"':""}>${txt}</span></div><b style="font-size:14px">${lab}</b><span class="m">${sub}</span></div>`;
 const li=(l,v,x="")=>`<div class="li"><span>${l}</span><span class="r"><b>${v}</b>${x}</span></div>`;
-function render(){applyCats();document.querySelectorAll("[data-acc]").forEach(e=>e.textContent=AN(e.dataset.acc));const b=S.b,so=S.soldes,dette=S.dettePerso+S.pret,{sc,spent,inc}=score(),fx=S.fixes||0,obj=S.objectif||0,pf=fx?Math.round(inc/fx*100):0;
+function render(){applyCats();["bcv","rev","yuh","cash"].forEach(k=>{const e=$(k);if(e&&document.activeElement!==e)e.value=Math.round((S.soldes[k]||0)*100)/100});document.querySelectorAll("[data-acc]").forEach(e=>e.textContent=AN(e.dataset.acc));const b=S.b,so=S.soldes,dette=S.dettePerso+S.pret,{sc,spent,inc}=score(),fx=S.fixes||0,obj=S.objectif||0,pf=fx?Math.round(inc/fx*100):0;
  const R=ring(sc,sc+"%","Budget",`${Math.round(spent)} / ${S.vie} CHF`)+ring(pf,Math.min(pf,999)+"%","Charges fixes",`${Math.round(inc)} / ${fx} CHF`)+ring(obj?inc/obj*100:0,Math.round(inc).toLocaleString("fr-CH")+" CHF","Entrées",`objectif ${obj.toLocaleString("fr-CH")}`,1);
  if(R!=lastR){$("rings").innerHTML=R;lastR=R}
  $("kpi").innerHTML=li("Argent total",f(so.bcv+so.rev+(so.yuh||0)+so.cash))+li("Dettes",f(dette))+li("On me doit",f(S.entDoit))+li("Mois couverts",(S.vie?b.reservoir/S.vie:0).toFixed(1)+" mois")+li("Je tiens jusqu'au",until(b.reservoir),`<div class="m">avec la réserve : ${until(b.reservoir+b.reserve)}</div>`);
@@ -170,9 +171,10 @@ function chart(){const now=new Date(),M=[];for(let i=11;i>=0;i--){const d=new Da
  let s=`<line x1="0" x2="${W}" y1="${b0}" y2="${b0}" stroke="var(--line)"/><line x1="0" x2="${W}" y1="${y(obj)}" y2="${y(obj)}" stroke="var(--mut)" stroke-width=".6"/><line x1="0" x2="${W}" y1="${y(S.fixes||0)}" y2="${y(S.fixes||0)}" stroke="var(--mut)" stroke-width=".6" stroke-dasharray="3 3"/><text x="${W-2}" y="${y(S.fixes||0)}" dy="-4" text-anchor="end" class="cl">fixes ${S.fixes||0} CHF</text><text x="${W-2}" y="${y(obj)-4}" text-anchor="end" class="cl">${obj.toLocaleString("fr-CH")} CHF</text>`;
  M.forEach((m,j)=>{const x=j*cw+cw/2;s+=(m.p?`<rect x="${x-bw-6}" y="${y(m.p)}" width="3" height="${b0-y(m.p)}" rx="1.5" fill="var(--ac)"><title>${m.l} année précédente : +${Math.round(m.p)} CHF</title></rect>`:"")+`<rect x="${x-bw-1}" y="${y(m.i)}" width="${bw}" height="${b0-y(m.i)}" rx="2" fill="var(--ok)"><title>${m.l} : +${Math.round(m.i)} CHF</title></rect><rect x="${x+1}" y="${y(m.o)}" width="${bw}" height="${b0-y(m.o)}" rx="2" fill="var(--bad)"><title>${m.l} : −${Math.round(m.o)} CHF</title></rect><text x="${x}" y="${H-6}" text-anchor="middle" class="cl">${m.l}</text>`});
  $("ch").innerHTML=s;const sc=$("ch").parentElement;requestAnimationFrame(()=>sc.scrollLeft=sc.scrollWidth)}
-function calc(){const a=+$("ca").value;if(!(a>0)){$("cr").innerHTML="";return}const r=alloc(a,$("cs").value);
+function calc(){const a=+$("ca").value;$("cv").hidden=!(a>0);if(!(a>0)){$("cr").innerHTML="";return}const r=alloc(a,$("cs").value);
  $("cr").innerHTML=Object.entries(r).filter(([,v])=>v>0).map(([k,v])=>li(L[k]+`<div class="m">${AC[k]}</div>`,f(v),`<div class="m">${Math.round(v/a*1000)/10} %</div>`)).join("")+li("<b>Total</b>",f(a),'<div class="m">100 %</div>')}
 $("ca").oninput=$("cs").onchange=calc;
+$("cv").onclick=async()=>{const a=+$("ca").value,s=$("cs").value;if(!(a>0)||!db)return;const N=structuredClone(S),M={reservoir:"bcv",dette:"bcv",plaisir:"rev",reserve:"yuh",placements:"yuh"};applyTx(N,"in",s,a,"Réparti via calculateur",null,new Date());const t=TX[0];t.so={};for(const[k,v]of Object.entries(t.fx.r||{}))if(M[k]){N.soldes[M[k]]=(N.soldes[M[k]]||0)+v;t.so[M[k]]=(t.so[M[k]]||0)+v}$("ca").value="";await save(N);$("cm").textContent="✓ "+f(a)+" enregistré, soldes mis à jour."};
 
 render();
 const K="mymo-v1";db=true;
@@ -205,7 +207,7 @@ function bilan(){const now=new Date(),d=new Date(now.getFullYear(),now.getMonth(
 $("mp").onclick=()=>{BM--;bilan()};$("mn").onclick=()=>{if(BM<0){BM++;bilan()}};
 function backupBanner(){let P2={};try{P2=JSON.parse(localStorage.getItem("mymo-prefs")||"{}")}catch(e){}const last=P2.lastBackup||0,days=Math.floor((Date.now()-last)/864e5);
  $("bk").innerHTML=(TX.length||S.soldes.bcv)&&(days>=7||(new Date().getDay()==1&&last<new Date().setHours(0,0,0,0)))?`<button type="button" class="banner lnk" id="bkb" style="width:100%;text-align:left;color:var(--fg)">${new Date().getDay()==1?"🗓 Sauvegarde du lundi":"⚠︎ "+(last?`Dernière sauvegarde il y a ${days} jours`:"Aucune sauvegarde pour l'instant")}. <span style="color:var(--ac)">Sauvegarder</span></button>`:"";const bb=$("bkb");if(bb)bb.onclick=()=>$("exp").click()}
-function undo(t,N){const x=t.fx;if(!x)return;if(x.r)for(const[k,v]of Object.entries(x.r)){if(k=="pret")N.pret+=v;else N.b[k]-=v}if(x.ed)N.entDoit+=x.ed;if(x.dp)N.dettePerso+=x.dp;if(x.pr)N.pret+=x.pr;if(x.e)N.b.dette+=x.e;if(x.pl)N.b.plaisir+=x.pl;if(x.rv)N.b.reservoir+=x.rv}
+function undo(t,N){if(t.so)for(const[k,v]of Object.entries(t.so))N.soldes[k]=(N.soldes[k]||0)-v;const x=t.fx;if(!x)return;if(x.r)for(const[k,v]of Object.entries(x.r)){if(k=="pret")N.pret+=v;else N.b[k]-=v}if(x.ed)N.entDoit+=x.ed;if(x.dp)N.dettePerso+=x.dp;if(x.pr)N.pret+=x.pr;if(x.e)N.b.dette+=x.e;if(x.pl)N.b.plaisir+=x.pl;if(x.rv)N.b.reservoir+=x.rv}
 (()=>{let sx=0,row=null;const H=$("h");
  H.addEventListener("touchstart",e=>{const r=e.target.closest(".srow");if(!r)return;sx=e.touches[0].clientX;row=r},{passive:true});
  H.addEventListener("touchend",e=>{if(!row)return;const dx=e.changedTouches[0].clientX-sx;document.querySelectorAll(".srow.open").forEach(x=>x!=row&&x.classList.remove("open"));if(dx<-40)row.classList.add("open");else if(dx>20)row.classList.remove("open");row=null},{passive:true});
@@ -277,7 +279,7 @@ $("f").onsubmit=async e=>{e.preventDefault();if(!db)return;const a=+$("a").value
  if(file){img="i"+Date.now();await putImg(img,file)}
  const N=structuredClone(S),msg=applyTx(N,ty,s,a,n,img,new Date());if(window.P){P.last={...(P.last||{}),[ty]:s};saveP()}await save(N);
  $("msg").textContent=msg;e.target.reset();file=null;$("pv").hidden=true;$("pick").textContent="Choisir…";ty==ty;opts()};
-$("fs").onsubmit=async e=>{e.preventDefault();if(!db)return;const N=structuredClone(S);for(const k of["bcv","rev","yuh","cash"])if($(k).value!=="")N.soldes[k]=+$(k).value;await save(N);e.target.reset()};
+$("fs").onsubmit=async e=>{e.preventDefault();if(!db)return;const N=structuredClone(S);for(const k of["bcv","rev","yuh","cash"])if($(k).value!=="")N.soldes[k]=+$(k).value;await save(N)};
 </script>
 
 
