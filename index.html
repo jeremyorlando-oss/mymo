@@ -78,8 +78,8 @@ img.th{width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:
 <label class="li"><span>Montant reçu</span><input id="ca" type="number" inputmode="decimal" step="0.05" min="0" placeholder="0.00 CHF"></label>
 <label class="li"><span>Type</span><select id="cs"></select></label>
 <div id="cr"></div></div>
-<button type="button" class="btn" id="cv" hidden>J'ai réparti l'argent</button>
-<p class="m" id="cm" style="margin:6px 16px">Vire chaque montant vers le compte indiqué, puis touche « J'ai réparti l'argent » : l'entrée est enregistrée et les soldes mis à jour. Ne l'ajoute pas une 2e fois en dessous.</p>
+<button type="button" class="btn" id="cv" hidden>J'ai fait les virements</button>
+<p class="m" id="cm" style="margin:6px 16px">Quand l'argent arrive, mets à jour le solde de ton compte salaire dans Comptes. Fais ensuite les virements indiqués, puis touche « J'ai fait les virements » : l'entrée est enregistrée et l'argent passe du compte salaire aux bons comptes, sans changer le total. Ne l'ajoute pas une 2e fois en dessous.</p>
 <h2>Ajouter</h2>
 <form id="f"><div class="grp">
 <div class="seg" id="seg"><button type="button" data-v="out" class="on">Dépense</button><button type="button" data-v="in">Entrée</button></div>
@@ -174,7 +174,7 @@ function chart(){const now=new Date(),M=[];for(let i=11;i>=0;i--){const d=new Da
 function calc(){const a=+$("ca").value;$("cv").hidden=!(a>0);if(!(a>0)){$("cr").innerHTML="";return}const r=alloc(a,$("cs").value);
  $("cr").innerHTML=Object.entries(r).filter(([,v])=>v>0).map(([k,v])=>li(L[k]+`<div class="m">${AC[k]}</div>`,f(v),`<div class="m">${Math.round(v/a*1000)/10} %</div>`)).join("")+li("<b>Total</b>",f(a),'<div class="m">100 %</div>')}
 $("ca").oninput=$("cs").onchange=calc;
-$("cv").onclick=async()=>{const a=+$("ca").value,s=$("cs").value;if(!(a>0)||!db)return;const N=structuredClone(S),M={reservoir:"bcv",dette:"bcv",plaisir:"rev",reserve:"yuh",placements:"yuh"};applyTx(N,"in",s,a,"Réparti via calculateur",null,new Date());const t=TX[0];t.so={};for(const[k,v]of Object.entries(t.fx.r||{}))if(M[k]){N.soldes[M[k]]=(N.soldes[M[k]]||0)+v;t.so[M[k]]=(t.so[M[k]]||0)+v}$("ca").value="";await save(N);$("cm").textContent="✓ "+f(a)+" enregistré, soldes mis à jour."};
+$("cv").onclick=async()=>{const a=+$("ca").value,s=$("cs").value;if(!(a>0)||!db)return;const N=structuredClone(S),M={plaisir:"rev",reserve:"yuh",placements:"yuh"};applyTx(N,"in",s,a,"Réparti via calculateur",null,new Date());const t=TX[0];t.so={};for(const[k,v]of Object.entries(t.fx.r||{}))if(M[k]){N.soldes[M[k]]=(N.soldes[M[k]]||0)+v;t.so[M[k]]=(t.so[M[k]]||0)+v;N.soldes.bcv=(N.soldes.bcv||0)-v;t.so.bcv=(t.so.bcv||0)-v}$("ca").value="";await save(N);$("cm").textContent="✓ "+f(a)+" enregistré, virements reportés dans les soldes."};
 
 render();
 const K="mymo-v1";db=true;
